@@ -1,5 +1,15 @@
-iikoto
+iikoto (Wirechan instance)
 ------
+
+**This is the Wirechan version of iikoto**
+
+If you want to create your own imageboard, you'd be better using the upstream version.
+
+Please contribute code modifications there too if possible as it saves time!
+
+Thank you.
+
+---
 
 iikoto is an imageboard written in ruby with sinatra!
 it's meant to be a replacement for vichan/kusaba/oh gosh those horrible legacy scripts
