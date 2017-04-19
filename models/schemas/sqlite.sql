@@ -19,7 +19,8 @@ CREATE TABLE posts (
   name TEXT NOT NULL,
   time DATETIME NOT NULL,
   body TEXT,
-  spoiler BOOLEAN
+  spoiler BOOLEAN,
+  ip TEXT NOT NULL
 );
 
 CREATE TABLE images (
@@ -36,4 +37,8 @@ CREATE TABLE users (
   username TEXT PRIMARY KEY NOT NULL,
   password TEXT NOT NULL,
   salt TEXT NOT NULL
+);
+
+CREATE TABLE bans (
+  ip TEXT PRIMARY KEY NOT NULL
 );

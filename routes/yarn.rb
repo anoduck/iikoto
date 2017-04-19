@@ -39,6 +39,8 @@ class Imageboard
     elsif yarn.nil?
       flash[:error] = "The thread you specified doesn't exist!"
       return redirect "/#{board.route}"
+    elsif Ban.banned? request.ip
+      return redirect '/banned'
     else
       if (!params.has_key? "body" or params[:body].empty?) and !params.has_key? "file"
         flash[:error] = "You can't make an empty reply!"
@@ -90,7 +92,8 @@ class Imageboard
           name: params[:name],
           spoiler: params[:spoiler] == "on",
           time: DateTime.now,
-          body: params[:body]
+          body: params[:body],
+          ip: request.ip
         })
 
         # Generate a UUID
@@ -148,7 +151,8 @@ class Imageboard
           name: params[:name],
           spoiler: params[:spoiler] == "on",
           time: DateTime.now,
-          body: params[:body]
+          body: params[:body],
+          ip: request.ip
         })
 
         # bump the thread
