@@ -29,3 +29,6 @@
 
 # contact email
 :email: admin@wirechan.org
+
+# secret token used for sessions. CHANGE THIS.
+:secret: your secret here
