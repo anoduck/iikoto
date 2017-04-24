@@ -1,6 +1,13 @@
 main#home
   img src="/favicon.png" class="logo" width="64" height="64"
-  table.boards
+  table.box
+    tr.top
+      td iikoto
+    tr
+      td
+        p Welcome to this installation of iikoto! One of the first things you should do is change the default username and password.
+        p The admin panel can be accessed at '/admin'. Consult the README for instructions.
+  table.box
     tr.top
       td URL
       td Title
@@ -16,6 +23,6 @@ main#home
         td
           a href="/#{board.route}"
             - if !board.yarns.empty?
-              | #{board.yarns.order('updated DESC').first.updated.elapsed}
+              | #{Yarn.where(board: board.route).order('updated DESC').first.updated.elapsed}
             - else
               | Never
