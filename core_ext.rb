@@ -49,4 +49,10 @@ class String
 
     self.crypt(salt).chars.last(10).join
   end
+
+  def formatted_tripcode
+    Rack::Utils.escape_html(self).gsub(/\#(.{3,}$)/) {
+     "<span class=\"tripcode\">!#{$1.tripcode}</span>"
+    }
+  end
 end
