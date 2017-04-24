@@ -9,7 +9,7 @@ main#thread
         | 🔒
   .post.op
     .info
-      span.name => yarn.op.name
+      span.name => yarn.op.name.formatted_tripcode
       span.time => yarn.op.time.strftime('%Y/%m/%d %H:%M')
       a.num href="/#{board.route}/thread/#{yarn.number}" &#8470;
       a.num.postnum =< yarn.number
@@ -41,7 +41,7 @@ main#thread
               img[ src="/thumbs/#{board.route}/#{reply.file.name}" title=reply.file.name ]
 
         .info
-          span.name => reply.name
+          span.name ==> reply.name.formatted_tripcode
           span.time => reply.time.strftime('%Y/%m/%d %H:%M')
           a.num href="/#{board.route}/thread/#{yarn.number}#p#{reply.number}"
             | &#8470;
