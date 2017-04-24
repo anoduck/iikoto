@@ -4,7 +4,7 @@ main#home
     tr.top
       td URL
       td Title
-      td Threads
+      td Last Updated
     - boards.each do |board|
       tr
         td
@@ -15,4 +15,7 @@ main#home
             | #{board.name}
         td
           a href="/#{board.route}"
-            | #{board.yarns.length}
+            - if !board.yarns.empty?
+              | #{board.yarns.order('updated DESC').first.updated.elapsed}
+            - else
+              | Never
