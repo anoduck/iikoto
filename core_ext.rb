@@ -24,3 +24,29 @@ class Time
     "#{elapsed} #{name} ago"
   end
 end
+
+class String
+  def tripcode
+    salt = self[1..2].chars.map { |char|
+      case char
+      when ':'  then 'A'
+      when ';'  then 'B'
+      when '<'  then 'C'
+      when '='  then 'D'
+      when '>'  then 'E'
+      when '?'  then 'F'
+      when '@'  then 'G'
+      when '['  then 'a'
+      when '\\' then 'b'
+      when ']'  then 'c'
+      when '^'  then 'd'
+      when '_'  then 'e'
+      when '`'  then 'f'
+      when '.'..'z' then char
+      else '.'
+      end
+    }.join
+
+    self.crypt(salt).chars.last(10).join
+  end
+end
