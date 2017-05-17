@@ -12,7 +12,7 @@ main#thread
       span.name ==> yarn.op.name.formatted_tripcode
       span.time => yarn.op.time.strftime('%Y/%m/%d %H:%M')
       a.num href="/#{board.route}/thread/#{yarn.number}" &#8470;
-      a.num.postnum =< yarn.number
+      a.num.postnum href="javascript:quote('#{yarn.number}')" =< yarn.number
       - if !session[:user].nil?
         div#adminops
           a href="/delete/#{yarn.number}" title="Delete" ❌
@@ -45,7 +45,7 @@ main#thread
           span.time => reply.time.strftime('%Y/%m/%d %H:%M')
           a.num href="/#{board.route}/thread/#{yarn.number}#p#{reply.number}"
             | &#8470;
-          a.num.postnum =< reply.number
+          a.num.postnum href="javascript:quote('#{reply.number}')" =< reply.number
           - if !session[:user].nil?
             div#adminops
               a href="/delete/#{reply.number}" title="Delete" ❌

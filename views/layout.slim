@@ -5,6 +5,8 @@ html
     meta charset='utf-8'
     link rel="shortcut icon" href="/favicon.png"
     link type='text/css' rel='stylesheet' href="/stylesheets/#{type}.css"
+    - if type == 'yarn'
+      script type="text/javascript" src="/yarn.js"
 
   body
     header
