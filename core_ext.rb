@@ -1,18 +1,18 @@
 class Time
   def elapsed
     elapsed = (Time.now - self).to_i
-    name = if 60 > elapsed
+    name = if elapsed < 60
              'second'
-           elsif 60 > elapsed /= 60
+           elsif elapsed /= 60 < 60
              'minute'
-           elsif 60 > elapsed /= 60
+           elsif elapsed /= 60 < 60
              'hour'
-           elsif 24 > elapsed /= 24
+           elsif elapsed /= 24 < 24
              'day'
-           elsif 7 > elapsed / 7
+           elsif elapsed / 7 < 7
              elapsed /= 7
              'week'
-           elsif 30 > elapsed / 30
+           elsif elapsed / 30 < 30
              elapsed /= 30
              'month'
            else
@@ -27,7 +27,7 @@ end
 
 class String
   def tripcode
-    salt = self[1..2].chars.map { |char|
+    salt = self[1..2].chars.map do |char|
       case char
       when ':'  then 'A'
       when ';'  then 'B'
@@ -45,14 +45,14 @@ class String
       when '.'..'z' then char
       else '.'
       end
-    }.join
+    end.join
 
-    self.crypt(salt).chars.last(10).join
+    crypt(salt).chars.last(10).join
   end
 
   def formatted_tripcode
-    Rack::Utils.escape_html(self).gsub(/\#(.{3,}$)/) {
-     "<span class=\"tripcode\">!#{$1.tripcode}</span>"
-    }
+    Rack::Utils.escape_html(self).gsub(/\#(.{3,}$)/) do
+      "<span class=\"tripcode\">!#{Regexp.last_match(1).tripcode}</span>"
+    end
   end
 end

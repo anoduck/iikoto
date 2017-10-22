@@ -1,28 +1,28 @@
 class Yarn < ActiveRecord::Base
   def op
-    Post.where(number: self.number).first
+    Post.where(number: number).first
   end
 
   def replies
-    Post.where(yarn: self.number)[1..-1]
+    Post.where(yarn: number)[1..-1]
   end
 
   def images
-    self.replies.select { |post|
-      !post.file.nil?
-    }
+    replies.reject do |post|
+      post.file.nil?
+    end
   end
 
   def completely_delete
-    Post.where(yarn: self.number).delete_all
-    self.delete
+    Post.where(yarn: number).delete_all
+    delete
   end
 
   def reply_limit?
-    self.replies.length >= $CONFIG[:reply_limit]
+    replies.length >= $CONFIG[:reply_limit]
   end
 
   def image_limit?
-    self.images.length >= $CONFIG[:image_limit]
+    images.length >= $CONFIG[:image_limit]
   end
 end

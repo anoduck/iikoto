@@ -35,16 +35,14 @@ class Imageboard
       return redirect '/'
     end
 
-    if Ban.banned? request.ip
-      return redirect '/banned'
-    end
+    return redirect '/banned' if Ban.banned? request.ip
 
-    if !params.has_key? "file" or !params[:file].is_a? Hash
+    if !params.key?('file') || !params[:file].is_a?(Hash)
       flash[:error] = "You can't start a thread with no file!"
       return redirect "/#{board.route}"
     end
 
-    if params.has_key? "body" and params[:body].length > $CONFIG[:character_limit]
+    if params.key?('body') && (params[:body].length > $CONFIG[:character_limit])
       flash[:error] = "Your text post exceeds #{$CONFIG[:character_limit]} characters."
       return redirect "/#{board.route}"
     end
@@ -52,44 +50,40 @@ class Imageboard
     file = params[:file][:tempfile]
     filetype = MimeMagic.by_path(file.path)
 
-    if !(filetype.subtype =~ /jpeg|gif|png/)
-      flash[:error] = "The file you provided is of invalid type."
+    if filetype.subtype !~ /jpeg|gif|png/
+      flash[:error] = 'The file you provided is of invalid type.'
       return redirect "/#{board.route}"
     end
 
     if file.size > $CONFIG[:max_filesize]
-      flash[:error] = "The file you provided is too large."
+      flash[:error] = 'The file you provided is too large.'
       return redirect "/#{board.route}"
     end
 
     begin
       image = MiniMagick::Image.read(file)
     rescue MiniMagick::Invalid
-      flash[:error] = "The image you provided is invalid."
+      flash[:error] = 'The image you provided is invalid.'
       return redirect "/#{board.route}"
     end
 
     properties = {}
 
-    if !image.valid?
-        flash[:error] = "The image you provided is invalid."
-        return redirect "/#{board.route}"
+    unless image.valid?
+      flash[:error] = 'The image you provided is invalid.'
+      return redirect "/#{board.route}"
     end
 
     # Generate a UUID
-    properties.merge!({
-      uuid: Image.uuid
-    })
+    properties[:uuid] = Image.uuid
 
     # Establish the image's common properties.
-    properties.merge!({
-      width: image.width,
-      height: image.height,
-      type: image.type.downcase
-    })
+    properties.merge!(width: image.width,
+                      height: image.height,
+                      type: image.type.downcase)
 
     # Save the original.
-    if !Dir.exist? "#{$ROOT}/public/images/#{board.route}"
+    unless Dir.exist? "#{$ROOT}/public/images/#{board.route}"
       FileUtils.mkpath "#{$ROOT}/public/images/#{board.route}"
     end
 
@@ -97,41 +91,35 @@ class Imageboard
     image.write "#{$ROOT}/public/images/#{board.route}/#{filename}"
 
     # Save the thumbnail.
-    if !Dir.exist? "#{$ROOT}/public/thumbs/#{board.route}"
+    unless Dir.exist? "#{$ROOT}/public/thumbs/#{board.route}"
       FileUtils.mkpath "#{$ROOT}/public/thumbs/#{board.route}"
     end
 
-    image.combine_options { |c|
-      c.resize "250x250"
-    }.format("jpg").write "#{$ROOT}/public/thumbs/#{board.route}/#{filename}"
+    image.combine_options do |c|
+      c.resize '250x250'
+    end.format('jpg').write "#{$ROOT}/public/thumbs/#{board.route}/#{filename}"
 
     image.destroy!
 
-    post = Post.create({
-      name: params[:name],
-      time: DateTime.now,
-      body: params[:body].strip,
-      spoiler: params[:spoiler] == "on",
-      ip: request.ip
-    })
+    post = Post.create(name: params[:name],
+                       time: DateTime.now,
+                       body: params[:body].strip,
+                       spoiler: params[:spoiler] == 'on',
+                       ip: request.ip)
 
-    yarn = Yarn.create({
-      number: post.number,
-      board: board.route,
-      updated: DateTime.now,
-      subject: params[:subject],
-      locked: false
-    })
+    yarn = Yarn.create(number: post.number,
+                       board: board.route,
+                       updated: DateTime.now,
+                       subject: params[:subject],
+                       locked: false)
 
     post.update(yarn: post.number)
 
-    imagefile = Image.create({
-      post: post.number,
-      extension: properties[:type],
-      name: filename,
-      width: properties[:width],
-      height: properties[:height]
-    })
+    imagefile = Image.create(post: post.number,
+                             extension: properties[:type],
+                             name: filename,
+                             width: properties[:width],
+                             height: properties[:height])
 
     return redirect "/#{board.route}/thread/#{yarn.number}"
   end

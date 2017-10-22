@@ -2,36 +2,30 @@
   :adapter: sqlite3
   :database: imageboard.db
 
-  #:adapter: mysql
-  #:host: localhost
-  #:username: myuser
-  #:password: mypass
-  #:database: iikoto
-
-# max image filesize in bytes
+# Max image filesize in bytes.
 :max_filesize: 2097152
 
-# thread post reply limit
+# Thread post reply limit.
 :reply_limit: 300
 
-# thread image reply limit
+# Thread image reply limit.
 :image_limit: 150
 
-# default poster name
+# Default poster name.
 :default_name: Anonymous
 
-# used in places that refer to the site
+# Used in places that refer to the site.
 :site_name: wirechan
 
-# Hash length to use for image filenames (the longer the better, technically.)
+# Hash length to use for image filenames.
 # Note that this affects the length of links to images on your site.
 :url_hash_size: 32
 
-# contact email
+# Contact email.
 :email: admin@wirechan.org
 
-# secret token used for sessions. CHANGE THIS.
+# Secret token used for sessions. CHANGE THIS.
 :secret: your secret here
 
-# maximum post length
+# Maximum post length.
 :character_limit: 1024

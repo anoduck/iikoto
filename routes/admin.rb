@@ -1,4 +1,4 @@
-  class Imageboard
+class Imageboard
   get '/admin' do
     locals = {
       title: "Admin Login - #{$CONFIG[:site_name]}",
@@ -9,9 +9,9 @@
     slim :admin, locals: locals
   end
 
-  get "/delete/:post" do
+  get '/delete/:post' do
     if session[:user].nil?
-      flash[:error] = "You are not authorized to do that."
+      flash[:error] = 'You are not authorized to do that.'
       return redirect '/'
     end
 
@@ -25,20 +25,20 @@
     yarn = Yarn.find_by(number: params[:post])
 
     # If there's a yarn with the post's number, then we're dealing with a thread.
-    if !yarn.nil?
+    unless yarn.nil?
       Post.where(yarn: params[:post]).delete_all
       yarn.delete
     end
 
     post.delete
-    flash[:error] = "Post deleted."
+    flash[:error] = 'Post deleted.'
     return redirect '/'
   end
 
-  get "/ban/:post" do
+  get '/ban/:post' do
     if session[:user].nil?
-        flash[:error] = "You are not authorized to do that."
-        return redirect '/'
+      flash[:error] = 'You are not authorized to do that.'
+      return redirect '/'
     end
 
     post = Post.find_by(number: params[:post])
@@ -50,7 +50,7 @@
 
     yarn = Yarn.find_by(number: params[:post])
 
-    if !yarn.nil?
+    unless yarn.nil?
       Post.where(yarn: params[:post]).delete_all
       yarn.delete
     end
@@ -60,42 +60,40 @@
     # delete any other posts and threads made by the user
     Ban.delete_by post.ip
 
-    Ban.create({
-        ip: post.ip
-    })
+    Ban.create(ip: post.ip)
 
-    flash[:error] = "User banned and all posts by that IP deleted."
+    flash[:error] = 'User banned and all posts by that IP deleted.'
     return redirect '/'
   end
 
   get '/logout' do
-    if !session[:user].nil?
+    unless session[:user].nil?
       session[:user] = nil
-      flash[:error] = "You are now logged out."
+      flash[:error] = 'You are now logged out.'
     end
 
     return redirect '/'
   end
 
   post '/admin' do
-    if !params.has_key?("username") or !params.has_key?("password")
-      flash[:error] = "Username or password missing."
-      return redirect "/admin"
+    if !params.key?('username') || !params.key?('password')
+      flash[:error] = 'Username or password missing.'
+      return redirect '/admin'
     end
 
-    if !User.exists?(params[:username])
-      flash[:error] = "Username or password invalid!"
-      return redirect "/admin"
+    unless User.exists?(params[:username])
+      flash[:error] = 'Username or password invalid!'
+      return redirect '/admin'
     end
 
-    if !User.authorized?(params[:username], params[:password])
-      flash[:error] = "Username or password invalid!"
-      return redirect "/admin"
+    unless User.authorized?(params[:username], params[:password])
+      flash[:error] = 'Username or password invalid!'
+      return redirect '/admin'
     end
 
     session[:user] = params[:username]
-    flash[:error] = "You are now logged in."
-    return redirect "/"
+    flash[:error] = 'You are now logged in.'
+    return redirect '/'
   end
 
   get '/banned' do

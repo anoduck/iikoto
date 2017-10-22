@@ -42,77 +42,71 @@ class Imageboard
     elsif Ban.banned? request.ip
       return redirect '/banned'
     else
-      if !params.has_key? "body" and !params.has_key? "file"
+      if !params.key?('body') && !params.key?('file')
         flash[:error] = "You can't make an empty reply!"
         return redirect "/#{board.route}/thread/#{yarn.number}"
       end
 
-      if params.has_key? "file"
+      if params.key? 'file'
         unless params[:file].is_a? Hash
-          flash[:error] = "File parameter must be a file."
+          flash[:error] = 'File parameter must be a file.'
           return redirect "/#{board.route}"
         end
 
         if yarn.image_limit?
-          flash[:error] = "The image reply limit has been reached."
+          flash[:error] = 'The image reply limit has been reached.'
           return redirect "/#{board.route}"
         end
 
         file = params[:file][:tempfile]
         filetype = MimeMagic.by_path(file.path)
 
-        if !(filetype.subtype =~ /jpeg|gif|png/)
-          flash[:error] = "The file you provided is of invalid type."
+        if filetype.subtype !~ /jpeg|gif|png/
+          flash[:error] = 'The file you provided is of invalid type.'
           return redirect "/#{board.route}"
         end
 
         if file.size > $CONFIG[:max_filesize]
-          flash[:error] = "The file you provided is too large."
+          flash[:error] = 'The file you provided is too large.'
           return redirect "/#{board.route}"
         end
 
         begin
           image = MiniMagick::Image.read(file)
         rescue MiniMagick::Invalid
-          flash[:error] = "The image you provided is invalid."
+          flash[:error] = 'The image you provided is invalid.'
           return redirect "/#{board.route}"
         end
 
         properties = {}
 
-        if !image.valid?
-          flash[:error] = "The image you provided is invalid."
+        unless image.valid?
+          flash[:error] = 'The image you provided is invalid.'
           return redirect "/#{board.route}"
         end
 
-        if params.has_key? "body" and params[:body].length > $CONFIG[:character_limit]
+        if params.key?('body') && (params[:body].length > $CONFIG[:character_limit])
           flash[:error] = "Your text post exceeds #{$CONFIG[:character_limit]} characters."
           return redirect "/#{board.route}"
         end
 
-        post = Post.create({
-          yarn: yarn.number,
-          name: params[:name],
-          spoiler: params[:spoiler] == "on",
-          time: DateTime.now,
-          body: (params[:body].nil?) ? nil : params[:body].strip,
-          ip: request.ip
-        })
+        post = Post.create(yarn: yarn.number,
+                           name: params[:name],
+                           spoiler: params[:spoiler] == 'on',
+                           time: DateTime.now,
+                           body: params[:body].nil? ? nil : params[:body].strip,
+                           ip: request.ip)
 
         # Generate a UUID
-        properties.merge!({
-            uuid: Image.uuid
-        })
+        properties[:uuid] = Image.uuid
 
         # Establish the image's common properties.
-        properties.merge!({
-          width: image.width,
-          height: image.height,
-          type: image.type.downcase
-        })
+        properties.merge!(width: image.width,
+                          height: image.height,
+                          type: image.type.downcase)
 
         # Save the original.
-        if !Dir.exist? "#{$ROOT}/public/images/#{board.route}"
+        unless Dir.exist? "#{$ROOT}/public/images/#{board.route}"
           FileUtils.mkpath "#{$ROOT}/public/images/#{board.route}"
         end
 
@@ -120,38 +114,36 @@ class Imageboard
         image.write "#{$ROOT}/public/images/#{board.route}/#{filename}"
 
         # Save the thumbnail.
-        if !Dir.exist? "#{$ROOT}/public/thumbs/#{board.route}"
+        unless Dir.exist? "#{$ROOT}/public/thumbs/#{board.route}"
           FileUtils.mkpath "#{$ROOT}/public/thumbs/#{board.route}"
         end
 
-        image.combine_options { |c|
-          c.resize "125x125"
-        }.format("jpg").write "#{$ROOT}/public/thumbs/#{board.route}/#{filename}"
+        image.combine_options do |c|
+          c.resize '125x125'
+        end.format('jpg').write "#{$ROOT}/public/thumbs/#{board.route}/#{filename}"
 
         image.destroy!
 
-        Image.create({
-          post: post.number,
-          extension: properties[:type],
-          name: filename,
-          width: properties[:width],
-          height: properties[:height]
-        })
+        Image.create(post: post.number,
+                     extension: properties[:type],
+                     name: filename,
+                     width: properties[:width],
+                     height: properties[:height])
 
         # bump the thread
-        unless params.has_key? "sage"
+        unless params.key? 'sage'
           yarn.updated = DateTime.now
           yarn.save
         end
       else
         if yarn.reply_limit?
-          flash[:error] = "The reply limit has been reached."
+          flash[:error] = 'The reply limit has been reached.'
           return redirect "/#{board.route}"
         end
 
-        if params.has_key? "body"
+        if params.key? 'body'
           if params[:body].strip.empty?
-            flash[:error] = "You cannot make an empty post."
+            flash[:error] = 'You cannot make an empty post.'
             return redirect "/#{board.route}"
           end
 
@@ -160,21 +152,19 @@ class Imageboard
             return redirect "/#{board.route}"
           end
         else
-          flash[:error] = "Your post must include the body field, if not an image."
+          flash[:error] = 'Your post must include the body field, if not an image.'
           return redirect "/#{board.route}"
         end
 
-        Post.create({
-          yarn: yarn.number,
-          name: params[:name],
-          spoiler: params[:spoiler] == "on",
-          time: DateTime.now,
-          body: (params[:body].nil?) ? nil : params[:body].strip,
-          ip: request.ip
-        })
+        Post.create(yarn: yarn.number,
+                    name: params[:name],
+                    spoiler: params[:spoiler] == 'on',
+                    time: DateTime.now,
+                    body: params[:body].nil? ? nil : params[:body].strip,
+                    ip: request.ip)
 
         # bump the thread
-        unless params.has_key? "sage"
+        unless params.key? 'sage'
           yarn.updated = DateTime.now
           yarn.save
         end

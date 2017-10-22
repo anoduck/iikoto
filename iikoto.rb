@@ -15,8 +15,8 @@ begin
 
   # An assertion function for fields in the config.
   def assert_config(field)
-    if !$CONFIG.has_key?(field)
-      raise "The config file is missing #{field}" unless $CONFIG.has_key?(field)
+    unless $CONFIG.key?(field)
+      raise "The config file is missing #{field}" unless $CONFIG.key?(field)
     end
   end
 
@@ -38,13 +38,13 @@ ActiveRecord::Base.establish_connection($CONFIG[:connection])
 class Imageboard < Sinatra::Base
   # Enable Rack CSRF protection and flashes.
   register Sinatra::Flash
-  set :public_folder, File.dirname(__FILE__) + "/public"
+  set :public_folder, File.dirname(__FILE__) + '/public'
 
   Sass::Plugin.options[:style] = :compressed
   use Sass::Plugin::Rack
   configure do
-    use Rack::Session::Cookie, :secret => $CONFIG[:secret]
-    use Rack::Csrf, :raise => true
+    use Rack::Session::Cookie, secret: $CONFIG[:secret]
+    use Rack::Csrf, raise: true
   end
 
   require_relative 'routes/main'
