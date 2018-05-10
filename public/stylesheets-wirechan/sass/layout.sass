@@ -1,16 +1,18 @@
-$text: #333
+$text: #EFEFEF
+$placeholder: #CCCCCC
 
-$darkest: #7E9CD9
-$darker: #B7C5D9
-$dark: #D6DAF0
-$light: #EEF2FF
-$lightest: #FFF
-$target: #D6BAD0
+$darkest: #2F2F2F
+$darker: #333333
+$dark: #4F4F4F
+$light: #555555
+$lighter: #6F6F6F
+$lightest: #999999
+$target: $lighter
 
 $quote: #789922
-$backquote: #D00
-$link: #34345C
-$name: #117743
+$backquote: #AACC99
+$link: #99BB88
+$name: #BB88AA
 
 $sans-serif: -apple-system, "Segoe UI", "Roboto", "Helvetica Neue", "Open Sans", sans-serif
 $monospace: "Lucida Console", Monaco, monospace
@@ -26,6 +28,10 @@ $border: 1px solid $darker
 =extrude
   border: $border
   box-shadow: $shadow
+
+@font-face
+  font-family: "LoveLetter"
+  src: url('/fonts/ll.ttf')
 
 // Restoring sanity
 html
@@ -54,9 +60,13 @@ hr
 body
   font-family: $sans-serif
 
+footer
+  margin: 10px
+
 .smol
   font-size: $smaller
   text-align: center
+  color: $lightest
 
 #banner
   border: 1px solid $darkest

@@ -13,6 +13,9 @@
 # Database
 *.db
 
+# Ignore the configuration file
+config.yml
+
 # Used by dotenv library to load environment variables.
 # .env
 

@@ -1,0 +1,29 @@
+@import common
+
+.box a
+  text-decoration: underline
+
+.box
+  border: 1px solid black
+  border-collapse: collapse
+  text-align: justify
+  margin: 10px auto 10px auto
+  max-width: 60%
+
+.box td
+  padding: 5px
+
+.box tr.top
+  font-weight: bold
+  font-size: 1rem
+  background: $darkest
+
+.box tr:nth-child(2n)
+  background: $dark
+
+img.logo
+  -webkit-user-drag: none
+  user-select: none
+  image-rendering: pixelated
+  display: block
+  margin: 0 auto 0 auto
