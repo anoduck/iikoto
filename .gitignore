@@ -13,6 +13,9 @@
 # Database
 *.db
 
+## Ignore emacs backups
+*~
+
 # Ignore the configuration file
 config.yml
 
